@@ -27,12 +27,10 @@ After a clone, running `build.cmd`. To create packages, use `build.cmd -CreatePa
 
 | Package | Nuget link |
 | ------- | ---- |
-| AutoFac | [AutoFac](https://www.nuget.org/packages/Autofac/6.2.0) |
 | Microsoft.Extensions.Logging.Abstractions| [Microsoft.Extensions.Logging.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0) |
 | Newtonsoft.Json | [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/13.0.1) |
 | Polly | [Polly](https://www.nuget.org/packages/Polly/7.2.2) |
 | RabbitMQ.Client | [RabbitMQ.Client](https://www.nuget.org/packages/RabbitMQ.Client/6.2.2) |
-| Samarasoft.Common| [Samarasoft.Common](https://www.nuget.org/packages/Samarasoft.Common/5.0.3) |
 <!-- Gen script inspiration: https://gist.github.com/NickCraver/33a825aca1fd0893ea019976a2f98850 -->
 
 #### License

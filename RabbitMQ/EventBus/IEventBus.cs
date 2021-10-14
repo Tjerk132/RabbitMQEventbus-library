@@ -1,4 +1,6 @@
-﻿using Samarasoft.Common.Events;
+﻿using RabbitMQ;
+using RabbitMQ.Client;
+using RabbitMQ.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,20 +10,27 @@ namespace RabbitMQ.EventBus
 {
     public interface IEventBus
     {
-        void Publish(IntegrationEvent @event);
+        /// <summary>
+        /// Publish a message to the eventBus with the given routingKey and event
+        /// </summary>
+        /// <param name="routingKey"></param>
+        /// <param name="event"></param>
+        public void Publish(string routingKey, IntegrationEvent @event);
 
-        void Subscribe<T, TH>()
-            where T : IntegrationEvent
-            where TH : IIntegrationEventHandler<T>;
+        /// <summary>
+        /// Subscribe to the event bus' queue with the given routingKeys
+        /// </summary>
+        /// <typeparam name="E">The type of event the handler will process</typeparam>
+        /// <typeparam name="EH">The type of eventHandler that will process the event</typeparam>
+        /// <param name="routingKeys"></param>
+        public void Subscribe<E, EH>(List<string> routingKeys)
+            where E : IntegrationEvent
+            where EH : IIntegrationEventHandler<E>;
 
-        void SubscribeDynamic<TH>(string eventName)
-            where TH : IDynamicIntegrationEventHandler;
-
-        void UnsubscribeDynamic<TH>(string eventName)
-            where TH : IDynamicIntegrationEventHandler;
-
-        void Unsubscribe<T, TH>()
-            where TH : IIntegrationEventHandler<T>
-            where T : IntegrationEvent;
+        /// <summary>
+        /// Unsubscribe from the event bus' queue with the given routingKeys
+        /// </summary>
+        /// <param name="routingKeys"></param>
+        public void Unsubscribe(List<string> routingKeys);
     }
 }
