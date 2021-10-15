@@ -6,6 +6,8 @@ Welcome to the RabbitMQ Eventbus project made for SAI.
 
 The current version of RabbitMQ Eventbus is v0.1.
 
+This library is available as package on [nuget](https://www.nuget.org/packages/RabbitEventbus)
+
 #### Handy Links
 
 * Documentation

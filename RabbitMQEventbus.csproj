@@ -1,12 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PackageId>RabbitMQEventbus</PackageId>
+    <PackageId>RabbitEventbus</PackageId>
     <Version>1.1.0</Version>
     <Authors>Tjerk Sevenich</Authors>
     <Company>SAI</Company>
     <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>A .NET 5.0 RabbitMQ Eventbus Class Library</Description>
+    <Copyright>SAI©</Copyright>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>CC0-1.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
