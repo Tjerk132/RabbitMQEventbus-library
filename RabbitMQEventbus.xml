@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RabbitMQEventbus</name>
+    </assembly>
+    <members>
+        <member name="P:RabbitMQ.Connection.IRabbitMQPersistentConnection.IsConnected">
+            <summary>
+            Determines if the RabbitMQ client is connected to the specified host
+            </summary>
+            <returns>true if the connection is established</returns>
+        </member>
+        <member name="M:RabbitMQ.Connection.IRabbitMQPersistentConnection.CreateModel">
+            <summary>
+            Creates a model created by the provided connectionFactory
+            </summary>
+            <returns>The model that is created with the connection</returns>
+        </member>
+        <member name="M:RabbitMQ.Connection.IRabbitMQPersistentConnection.TryConnect">
+            <summary>
+            Attempts to create a connection with the provided connectionFactory
+            </summary>
+            <returns>true if the connection was successful</returns>
+        </member>
+        <member name="M:RabbitMQ.EventBus.IEventBus.Publish(System.String,RabbitMQ.Events.IntegrationEvent)">
+            <summary>
+            Publish a message to the eventBus with the given routingKey and event
+            </summary>
+            <param name="routingKey"></param>
+            <param name="event"></param>
+        </member>
+        <member name="M:RabbitMQ.EventBus.IEventBus.Subscribe``2(System.Collections.Generic.List{System.String})">
+            <summary>
+            Subscribe to the event bus' queue with the given routingKeys
+            </summary>
+            <typeparam name="E">The type of event the handler will process</typeparam>
+            <typeparam name="EH">The type of eventHandler that will process the event</typeparam>
+            <param name="routingKeys"></param>
+        </member>
+        <member name="M:RabbitMQ.EventBus.IEventBus.Unsubscribe(System.Collections.Generic.List{System.String})">
+            <summary>
+            Unsubscribe from the event bus' queue with the given routingKeys
+            </summary>
+            <param name="routingKeys"></param>
+        </member>
+        <member name="M:RabbitMQ.Events.IntegrationEvent.#ctor">
+            <summary>
+              Default constructor.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:RabbitMQ.Events.IntegrationEvent.SetArgs(RabbitMQ.Client.Events.BasicDeliverEventArgs)" -->
+        <member name="P:RabbitMQ.Events.IntegrationEvent.EventId">
+            <summary>
+            Event Id.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Events.IntegrationEvent.Exchange">
+            <summary>
+            The exchange the message was originally published to.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Events.IntegrationEvent.RoutingKey">
+            <summary>
+            The routing key used when the message was originally published.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Events.IntegrationEvent.TimeStamp">
+            <summary>
+            Message timestamp.
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Models.RabbitExchange.Name">
+            <summary>
+            The name of the exchange
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Models.RabbitExchange.Type">
+            <summary>
+            The type of the exchange
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Models.RabbitQueue.Name">
+            <summary>
+            The name of the queue
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Models.RabbitQueue.Durable">
+            <summary>
+            Should this queue survive a broker restart?
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Models.RabbitQueue.RoutingKeys">
+            <summary>
+            The routingKeys the queue will be binded with
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.SubscriptionsManager.IEventBusSubscriptionsManager.AddSubscription``2(RabbitMQ.Client.IModel,RabbitMQ.Models.RabbitExchange,RabbitMQ.Models.RabbitQueue)">
+            <summary>
+            Binds the given queue to the event bus' exchange
+            </summary>
+            <typeparam name="E">The type of event the handler will process</typeparam>
+            <typeparam name="EH">The type of eventHandler that will process the event</typeparam>
+            <param name="channel"></param>
+            <param name="exchange"></param>
+            <param name="queue"></param>
+        </member>
+        <member name="M:RabbitMQ.SubscriptionsManager.IEventBusSubscriptionsManager.RemoveSubscription(RabbitMQ.Client.IModel,RabbitMQ.Models.RabbitExchange,RabbitMQ.Models.RabbitQueue)">
+            <summary>
+            Unbinds the given queue from the event bus' exchange
+            </summary>
+            <param name="channel"></param>
+            <param name="exchange"></param>
+            <param name="queue"></param>
+        </member>
+    </members>
+</doc>

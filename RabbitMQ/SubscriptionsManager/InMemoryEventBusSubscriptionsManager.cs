@@ -6,6 +6,7 @@ using RabbitMQ.Events;
 using RabbitMQ.Models;
 using System;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace RabbitMQ.SubscriptionsManager
 {
@@ -47,6 +48,8 @@ namespace RabbitMQ.SubscriptionsManager
                 integrationEvent.SetArgs(eventArgs);
 
                 EH eventHandler = (EH) Activator.CreateInstance(typeof(EH));
+
+                //EH eventHandler = (EH) ActivatorUtilities.CreateInstance<EH>(provider);
                 
                 eventHandler.Handle(integrationEvent);
             };

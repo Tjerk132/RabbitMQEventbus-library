@@ -1,4 +1,5 @@
-﻿using RabbitMQ;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ;
 using RabbitMQ.Client;
 using RabbitMQ.Events;
 using System;

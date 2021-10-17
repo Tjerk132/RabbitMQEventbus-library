@@ -1,6 +1,8 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client;
 using RabbitMQ.Events;
 using RabbitMQ.Models;
+using System;
 
 namespace RabbitMQ.SubscriptionsManager
 {
