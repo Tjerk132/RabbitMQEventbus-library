@@ -21,6 +21,7 @@ namespace RabbitMQ.SubscriptionsManager
 
         public void AddSubscription<E, EH>(
             IModel channel,
+            object[] args,
             RabbitExchange exchange, 
             RabbitQueue queue
         )
@@ -47,9 +48,7 @@ namespace RabbitMQ.SubscriptionsManager
                 E integrationEvent = (E) JsonConvert.DeserializeObject(message, typeof(E));
                 integrationEvent.SetArgs(eventArgs);
 
-                EH eventHandler = (EH) Activator.CreateInstance(typeof(EH));
-
-                //EH eventHandler = (EH) ActivatorUtilities.CreateInstance<EH>(provider);
+                EH eventHandler = (EH) Activator.CreateInstance(typeof(EH), args);
                 
                 eventHandler.Handle(integrationEvent);
             };

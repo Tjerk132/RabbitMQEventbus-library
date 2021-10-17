@@ -46,12 +46,12 @@ namespace RabbitMQ.EventBus
             _consumerChannel = CreateConsumerChannel();
         }
 
-        public void Subscribe<E, EH>(List<string> routingKeys)
+        public void Subscribe<E, EH>(List<string> routingKeys, object[] services)
             where E : IntegrationEvent
             where EH : IIntegrationEventHandler<E>
         {
             _queue.AddRoutingKeys(routingKeys);
-            _subsManager.AddSubscription<E, EH>(_consumerChannel, _exchange, _queue);
+            _subsManager.AddSubscription<E, EH>(_consumerChannel, args: services, _exchange, _queue);
         }
 
         public void Unsubscribe(List<string> routingKeys)
