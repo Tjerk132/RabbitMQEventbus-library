@@ -26,8 +26,8 @@
             <summary>
             Publish a message to the eventBus with the given routingKey and event
             </summary>
-            <param name="routingKey"></param>
-            <param name="event"></param>
+            <param name="routingKey">The routing key to publish the event with</param>
+            <param name="event">The event to publish</param>
         </member>
         <member name="M:RabbitMQ.EventBus.IEventBus.Subscribe``2(System.Collections.Generic.List{System.String},System.Object[])">
             <summary>
@@ -35,14 +35,20 @@
             </summary>
             <typeparam name="E">The type of event the handler will process</typeparam>
             <typeparam name="EH">The type of eventHandler that will process the event</typeparam>
-            <param name="routingKeys"></param>
-            <param name="services"></param>
+            <param name="routingKeys">The routing keys to subscribe with</param>
+            <param name="services">The services to inject into the eventHandler</param>
         </member>
         <member name="M:RabbitMQ.EventBus.IEventBus.Unsubscribe(System.Collections.Generic.List{System.String})">
             <summary>
             Unsubscribe from the event bus' queue with the given routingKeys
             </summary>
-            <param name="routingKeys"></param>
+            <param name="routingKeys">The routing keys to unsubscribe with</param>
+        </member>
+        <member name="M:RabbitMQ.Events.IIntegrationEventHandler`1.Handle(`0)">
+            <summary>
+            The method will be invoked to handle the message received from the eventbus
+            </summary>
+            <param name="event">The event to process</param>
         </member>
         <member name="M:RabbitMQ.Events.IntegrationEvent.#ctor">
             <summary>
@@ -101,18 +107,28 @@
             </summary>
             <typeparam name="E">The type of event the handler will process</typeparam>
             <typeparam name="EH">The type of eventHandler that will process the event</typeparam>
-            <param name="channel"></param>
-            <param name="args"></param>
-            <param name="exchange"></param>
-            <param name="queue"></param>
+            <param name="channel">The channel that will be used to declare exchanges and bind with the given queue</param>
+            <param name="args">The services that will be injected into the eventHandler</param>
+            <param name="exchange">The exchange on which the subscription addition should occur</param>
+            <param name="queue">The queue with routingKeys to bind</param>
         </member>
         <member name="M:RabbitMQ.SubscriptionsManager.IEventBusSubscriptionsManager.RemoveSubscription(RabbitMQ.Client.IModel,RabbitMQ.Models.RabbitExchange,RabbitMQ.Models.RabbitQueue)">
             <summary>
             Unbinds the given queue from the event bus' exchange
             </summary>
-            <param name="channel"></param>
-            <param name="exchange"></param>
-            <param name="queue"></param>
+            <param name="channel">THe channel that will be used to declare exchanges and unbind with the given queue</param>
+            <param name="exchange">The exchange on which the subscription removal should occur</param>
+            <param name="queue">The queue with routingKeys to unbind</param>
+        </member>
+        <member name="M:RabbitMQEventbus.RabbitMQ.Extensions.AddRabbitMQ(Microsoft.Extensions.DependencyInjection.IServiceCollection,RabbitMQ.Client.IConnectionFactory,RabbitMQ.Models.RabbitExchange,RabbitMQ.Models.RabbitQueue)">
+            <summary>
+            Creates a eventbus instance and adds it as singleton to the specified services
+            </summary>
+            <param name="services">The services to configure the eventbus with</param>
+            <param name="connectionFactory">The connectionFactory to use for establishing a connection to RabbitMQ</param>
+            <param name="exchange">A exchange to create on the event bus</param>
+            <param name="queue">A queue to create on the eventbus</param>
+            <returns>The services with added RabbitMQ configuration</returns>
         </member>
     </members>
 </doc>
