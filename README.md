@@ -29,7 +29,9 @@ After a clone, running `build.cmd`. To create packages, use `build.cmd -CreatePa
 
 | Package | Nuget link |
 | ------- | ---- |
-| Microsoft.Extensions.Logging.Abstractions| [Microsoft.Extensions.Logging.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0) |
+| Microsoft.Extensions.Configuration.Abstractions | [Microsoft.Extensions.Configuration.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Abstractions/5.0.0) |
+| Microsoft.Extensions.DependencyInjection | [Microsoft.Extensions.DependencyInjection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/5.0.2) |
+| Microsoft.Extensions.Logging.Abstractions | [Microsoft.Extensions.Logging.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/5.0.0) |
 | Newtonsoft.Json | [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/13.0.1) |
 | Polly | [Polly](https://www.nuget.org/packages/Polly/7.2.2) |
 | RabbitMQ.Client | [RabbitMQ.Client](https://www.nuget.org/packages/RabbitMQ.Client/6.2.2) |

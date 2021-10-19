@@ -1,16 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Connection;
 using RabbitMQ.EventBus;
-using RabbitMQ.Models;
 using RabbitMQ.SubscriptionsManager;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace RabbitMQEventbus.RabbitMQ
 {
     public static class Extensions
@@ -19,20 +14,21 @@ namespace RabbitMQEventbus.RabbitMQ
         /// Creates a eventbus instance and adds it as singleton to the specified services
         /// </summary>
         /// <param name="services">The services to configure the eventbus with</param>
-        /// <param name="connectionFactory">The connectionFactory to use for establishing a connection to RabbitMQ</param>
-        /// <param name="exchange">A exchange to create on the event bus</param>
-        /// <param name="queue">A queue to create on the eventbus</param>
         /// <returns>The services with added RabbitMQ configuration</returns>
         public static IServiceCollection AddRabbitMQ(
-            this IServiceCollection services, 
-            IConnectionFactory connectionFactory, 
-            RabbitExchange exchange, 
-            RabbitQueue queue
+            this IServiceCollection services
         )
         {
+            var sp = services.BuildServiceProvider();
+            var options = sp.GetService<IOptions<RabbitMQConfiguration>>();
+
+            RabbitMQConfiguration configuration = options.Value;
+
             services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
+                IConnectionFactory connectionFactory = new ConnectionFactory() { HostName = configuration.Hostname };
+
                 return new DefaultRabbitMQPersistentConnection(connectionFactory, logger);
             });
 
@@ -48,11 +44,10 @@ namespace RabbitMQEventbus.RabbitMQ
                     serviceBusPersisterConnection,
                     eventBusSubcriptionsManager,
                     logger,
-                    exchange, 
-                    queue
+                    configuration.Exchange,
+                    configuration.Queues
                 );
             });
-
             return services;
         }
     }

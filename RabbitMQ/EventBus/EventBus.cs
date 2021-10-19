@@ -24,14 +24,14 @@ namespace RabbitMQ.EventBus
         private readonly int _retryCount;
 
         private readonly RabbitExchange _exchange;
-        private readonly RabbitQueue _queue;
+        private readonly List<RabbitQueue> _queues;
 
         public EventBus(
             IRabbitMQPersistentConnection persistentConnection,
             IEventBusSubscriptionsManager subsManager,
             ILogger<EventBus> logger,
             RabbitExchange exchange,
-            RabbitQueue queue,
+            List<RabbitQueue> queues,
             int retryCount = 5
         )
         {
@@ -40,24 +40,26 @@ namespace RabbitMQ.EventBus
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _exchange = exchange ?? new RabbitExchange();
-            _queue = queue ?? new RabbitQueue();
+            _queues = queues ?? new List<RabbitQueue>();
             _retryCount = retryCount;
 
             _consumerChannel = CreateConsumerChannel();
         }
 
-        public void Subscribe<E, EH>(List<string> routingKeys, object[] services)
+        public void Subscribe<E, EH>(string queueName, List<string> routingKeys, object[] services)
             where E : IntegrationEvent
             where EH : IIntegrationEventHandler<E>
         {
-            _queue.AddRoutingKeys(routingKeys);
-            _subsManager.AddSubscription<E, EH>(_consumerChannel, args: services, _exchange, _queue);
+            RabbitQueue queue = _queues.Find(x => x.Name.Equals(queueName));
+            queue.AddRoutingKeys(routingKeys);
+            _subsManager.AddSubscription<E, EH>(_consumerChannel, args: services, _exchange, queue);
         }
 
-        public void Unsubscribe(List<string> routingKeys)
+        public void Unsubscribe(string queueName, List<string> routingKeys)
         {
-            _queue.RemoveRoutingKeys(routingKeys);
-            _subsManager.RemoveSubscription(_consumerChannel, _exchange, _queue);
+            RabbitQueue queue = _queues.Find(x => x.Name.Equals(queueName));
+            queue.RemoveRoutingKeys(routingKeys);
+            _subsManager.RemoveSubscription(_consumerChannel, _exchange, queue);
         }
 
         public void Publish(string routingKey, IntegrationEvent @event)
@@ -117,11 +119,14 @@ namespace RabbitMQ.EventBus
 
             channel.ExchangeDeclare(exchange: _exchange.Name, type: _exchange.Type);
 
-            channel.QueueDeclare(queue: _queue.Name,
-                                 durable: _queue.Durable,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
+            foreach (RabbitQueue queue in _queues)
+            {
+                channel.QueueDeclare(queue: queue.Name,
+                                     durable: queue.Durable,
+                                     exclusive: false,
+                                     autoDelete: false,
+                                     arguments: null);
+            }
 
             channel.CallbackException += (sender, ea) =>
             {
@@ -140,7 +145,7 @@ namespace RabbitMQ.EventBus
             {
                 _consumerChannel.Dispose();
             }
-            _queue.Clear();
+            _queues.Clear();
         }
     }
 }

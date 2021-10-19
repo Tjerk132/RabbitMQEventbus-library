@@ -25,7 +25,8 @@ namespace RabbitMQ.EventBus
         /// <typeparam name="EH">The type of eventHandler that will process the event</typeparam>
         /// <param name="routingKeys">The routing keys to subscribe with</param>
         /// <param name="services">The services to inject into the eventHandler</param>
-        public void Subscribe<E, EH>(List<string> routingKeys, object[] services)
+        /// <param name="queueName">The name of the queue to subscribe to</param>
+        public void Subscribe<E, EH>(string queueName, List<string> routingKeys, object[] services)
             where E : IntegrationEvent
             where EH : IIntegrationEventHandler<E>;
 
@@ -33,6 +34,7 @@ namespace RabbitMQ.EventBus
         /// Unsubscribe from the event bus' queue with the given routingKeys
         /// </summary>
         /// <param name="routingKeys">The routing keys to unsubscribe with</param>
-        public void Unsubscribe(List<string> routingKeys);
+        /// <param name="queueName">The name of the queue to unsubscribe from</param>
+        public void Unsubscribe(string queueName, List<string> routingKeys);
     }
 }

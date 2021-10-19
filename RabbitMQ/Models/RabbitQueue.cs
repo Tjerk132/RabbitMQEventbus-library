@@ -10,15 +10,17 @@ namespace RabbitMQ.Models
         /// <summary>
         /// The name of the queue
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
+
         /// <summary>
         /// Should this queue survive a broker restart?
         /// </summary>
-        public bool Durable { get; private set; }
+        /// 
+        public bool Durable { get; set; }
         /// <summary>
         /// The routingKeys the queue will be binded with
         /// </summary>
-        public List<string> RoutingKeys { get; private set; }
+        public List<string> RoutingKeys { get; set; }
 
         public RabbitQueue(string name = null, bool durable = false, List<string> routingKeys = null)
         {
@@ -26,6 +28,11 @@ namespace RabbitMQ.Models
             Durable = durable;
             RoutingKeys = routingKeys ?? new List<string>();
         }
+
+        /// <summary>
+        /// Default constructor required for configuration
+        /// </summary>
+        public RabbitQueue() { }
 
         public void AddRoutingKey(string routingKey) => RoutingKeys.Add(routingKey);
         
