@@ -8,20 +8,20 @@ namespace RabbitMQ.Models
         /// The name of the exchange
         /// </summary>
         public string Name { get; set; }
+
+        private string type;
         /// <summary>
         /// The type of the exchange
         /// </summary>
-        public string Type { get; set; }
-
-        public RabbitExchange(string name = null, string type = ExchangeType.Fanout)
+        public string Type
         {
-            Name = name;
-            Type = ExchangeType.All().Contains(type) ? type : ExchangeType.Fanout;
+            get => type;
+            set => type = ExchangeType.All().Contains(value) ? value : ExchangeType.Fanout;
         }
 
         /// <summary>
         /// Default constructor required for configuration
         /// </summary>
-        public RabbitExchange(){ }
+        public RabbitExchange() { }
     }
 }

@@ -51,6 +51,11 @@ namespace RabbitMQ.EventBus
             where EH : IIntegrationEventHandler<E>
         {
             RabbitQueue queue = _queues.Find(x => x.Name.Equals(queueName));
+            if(queue == null)
+            {
+                _logger.LogWarning("Cannot subscribe to queue {0} because not found", queueName);
+                return;
+            }
             queue.AddRoutingKeys(routingKeys);
             _subsManager.AddSubscription<E, EH>(_consumerChannel, args: services, _exchange, queue);
         }
@@ -58,6 +63,11 @@ namespace RabbitMQ.EventBus
         public void Unsubscribe(string queueName, List<string> routingKeys)
         {
             RabbitQueue queue = _queues.Find(x => x.Name.Equals(queueName));
+            if (queue == null)
+            {
+                _logger.LogWarning("Cannot unsubscribe from queue {0} because not found", queueName);
+                return;
+            }
             queue.RemoveRoutingKeys(routingKeys);
             _subsManager.RemoveSubscription(_consumerChannel, _exchange, queue);
         }

@@ -17,16 +17,15 @@ namespace RabbitMQ.Models
         /// </summary>
         /// 
         public bool Durable { get; set; }
+
+        private List<string> routingKeys;
         /// <summary>
         /// The routingKeys the queue will be binded with
         /// </summary>
-        public List<string> RoutingKeys { get; set; }
-
-        public RabbitQueue(string name = null, bool durable = false, List<string> routingKeys = null)
+        public List<string> RoutingKeys 
         {
-            Name = name;
-            Durable = durable;
-            RoutingKeys = routingKeys ?? new List<string>();
+            get => routingKeys;
+            set => routingKeys = value ?? new List<string>();
         }
 
         /// <summary>
