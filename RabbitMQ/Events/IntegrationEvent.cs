@@ -18,34 +18,23 @@ namespace RabbitMQ.Events
         public void SetArgs(BasicDeliverEventArgs args)
         {
             EventId = Guid.NewGuid();
-            Exchange = args.Exchange;
-            RoutingKey = args.RoutingKey;
-            TimeStamp = args.BasicProperties.Timestamp;
+            BasicProperties = args.BasicProperties;
         }
 
         /// <summary>
         /// Event Id.
         /// </summary>
         public Guid EventId { get; private set; }
+
         /// <summary>
-        /// The exchange the message was originally published to.
+        /// Application correlation identifier
         /// </summary>
-        public string Exchange { get; private set; }
-        /// <summary>
-        /// The routing key used when the message was originally published.
-        /// </summary>
-        public string RoutingKey { get; private set; }
-        /// <summary>
-        /// Message timestamp.
-        /// </summary>
-        public AmqpTimestamp TimeStamp { get; private set; }
+        public IBasicProperties BasicProperties { get; set; }
     }
 
     public interface IEvent
     {
         Guid EventId { get; }
-        string Exchange { get; }
-        public string RoutingKey { get; }
-        AmqpTimestamp TimeStamp { get; }
+        IBasicProperties BasicProperties { get; }
     }
 }

@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Connection;
-using RabbitMQ.EventBus;
+using RabbitMQ.EventsBus;
 using RabbitMQ.SubscriptionsManager;
-namespace RabbitMQEventbus.RabbitMQ
+
+namespace RabbitMQ
 {
     public static class Extensions
     {
@@ -15,9 +15,7 @@ namespace RabbitMQEventbus.RabbitMQ
         /// </summary>
         /// <param name="services">The services to configure the eventbus with</param>
         /// <returns>The services with added RabbitMQ configuration</returns>
-        public static IServiceCollection AddRabbitMQ(
-            this IServiceCollection services
-        )
+        public static IServiceCollection AddRabbitMQ(this IServiceCollection services)
         {
             var sp = services.BuildServiceProvider();
             var options = sp.GetService<IOptions<RabbitMQConfiguration>>();
@@ -44,8 +42,7 @@ namespace RabbitMQEventbus.RabbitMQ
                     serviceBusPersisterConnection,
                     eventBusSubcriptionsManager,
                     logger,
-                    configuration.Exchange,
-                    configuration.Queues
+                    configuration
                 );
             });
             return services;

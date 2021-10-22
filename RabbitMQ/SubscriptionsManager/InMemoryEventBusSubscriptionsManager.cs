@@ -6,7 +6,7 @@ using RabbitMQ.Events;
 using RabbitMQ.Models;
 using System;
 using System.Text;
-using Microsoft.Extensions.DependencyInjection;
+using RabbitMQEventbus.RabbitMQ.Models;
 
 namespace RabbitMQ.SubscriptionsManager
 {
@@ -45,16 +45,15 @@ namespace RabbitMQ.SubscriptionsManager
                 var body = eventArgs.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
 
-                E integrationEvent = (E) JsonConvert.DeserializeObject(message, typeof(E));
+                E integrationEvent = (E)JsonConvert.DeserializeObject(message, typeof(E));
                 integrationEvent.SetArgs(eventArgs);
 
-                EH eventHandler = (EH) Activator.CreateInstance(typeof(EH), args);
-                
+                EH eventHandler = (EH)Activator.CreateInstance(typeof(EH), args);
+
                 eventHandler.Handle(integrationEvent);
             };
             channel.BasicConsume(queue: queue.Name, autoAck: true, consumer: consumer);
         }
-
 
         public void RemoveSubscription(
             IModel channel,
@@ -68,6 +67,19 @@ namespace RabbitMQ.SubscriptionsManager
             {
                 channel.QueueUnbind(queue.Name, exchange.Name, routingKey);
             }
+        }
+
+        public void CreateRpcServer<E, EH>(IModel channel, RabbitQueue queue)
+            where E : IntegrationEvent
+            where EH : IRpcIntegrationEventHandler<E>
+        {
+            _ = new RpcServer<E, EH>(channel, queue);
+        }
+
+        public string CallRpcServer(IModel channel, object message, string routingKey)
+        {
+            var rpcClient = new RpcClient(channel, queueName: routingKey);
+            return rpcClient.Call(message, routingKey);
         }
     }
 }

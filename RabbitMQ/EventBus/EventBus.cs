@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
 using RabbitMQ.Client;
@@ -13,7 +12,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 
-namespace RabbitMQ.EventBus
+namespace RabbitMQ.EventsBus
 {
     public class EventBus : IEventBus, IDisposable
     {
@@ -30,8 +29,7 @@ namespace RabbitMQ.EventBus
             IRabbitMQPersistentConnection persistentConnection,
             IEventBusSubscriptionsManager subsManager,
             ILogger<EventBus> logger,
-            RabbitExchange exchange,
-            List<RabbitQueue> queues,
+            RabbitMQConfiguration configuration,
             int retryCount = 5
         )
         {
@@ -39,8 +37,8 @@ namespace RabbitMQ.EventBus
             _subsManager = subsManager;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            _exchange = exchange ?? new RabbitExchange();
-            _queues = queues ?? new List<RabbitQueue>();
+            _exchange = configuration.Exchange ?? new RabbitExchange();
+            _queues = configuration.Queues ?? new List<RabbitQueue>();
             _retryCount = retryCount;
 
             _consumerChannel = CreateConsumerChannel();
@@ -50,26 +48,28 @@ namespace RabbitMQ.EventBus
             where E : IntegrationEvent
             where EH : IIntegrationEventHandler<E>
         {
-            RabbitQueue queue = _queues.Find(x => x.Name.Equals(queueName));
-            if(queue == null)
+            if (FindQueueForName(queueName) is RabbitQueue queue && queue != null)
             {
-                _logger.LogWarning("Cannot subscribe to queue {0} because not found", queueName);
-                return;
+                queue.AddRoutingKeys(routingKeys);
+                _subsManager.AddSubscription<E, EH>(_consumerChannel, args: services, _exchange, queue);
             }
-            queue.AddRoutingKeys(routingKeys);
-            _subsManager.AddSubscription<E, EH>(_consumerChannel, args: services, _exchange, queue);
+            else
+            {
+                _logger.LogWarning("Cannot subscribe to queue '{0}' because not found", queueName);
+            }
         }
 
         public void Unsubscribe(string queueName, List<string> routingKeys)
         {
-            RabbitQueue queue = _queues.Find(x => x.Name.Equals(queueName));
-            if (queue == null)
+            if (FindQueueForName(queueName) is RabbitQueue queue && queue != null)
             {
-                _logger.LogWarning("Cannot unsubscribe from queue {0} because not found", queueName);
-                return;
+                queue.RemoveRoutingKeys(routingKeys);
+                _subsManager.RemoveSubscription(_consumerChannel, _exchange, queue);
             }
-            queue.RemoveRoutingKeys(routingKeys);
-            _subsManager.RemoveSubscription(_consumerChannel, _exchange, queue);
+            else
+            {
+                _logger.LogWarning("Cannot unsubscribe to queue '{0}' because not found", queueName);
+            }
         }
 
         public void Publish(string routingKey, IntegrationEvent @event)
@@ -103,8 +103,8 @@ namespace RabbitMQ.EventBus
 
             policy.Execute(() =>
             {
-                var properties = channel.CreateBasicProperties();
-                properties.DeliveryMode = 2; // persistent
+                var properties = @event.BasicProperties ?? channel.CreateBasicProperties();
+                //properties.DeliveryMode = 2; // persistent
 
                 _logger.LogTrace("Publishing event to RabbitMQ: {EventId}", @event.EventId);
 
@@ -115,6 +115,27 @@ namespace RabbitMQ.EventBus
                             body: body);
             });
         }
+
+
+        public void CreateRpcServer<E, EH>(string queueName)
+                where E : IntegrationEvent
+                where EH : IRpcIntegrationEventHandler<E>
+        {
+            if (FindQueueForName(queueName) is RabbitQueue queue && queue != null)
+            { 
+                _subsManager.CreateRpcServer<E, EH>(_consumerChannel, queue);
+            }
+            else
+            {
+                _logger.LogWarning("Cannot create RPC server with queue '{0}' because not found", queueName);
+            }
+        }
+
+        public string CallRpcServer(object message, string routingKey)
+        {
+            return _subsManager.CallRpcServer(_consumerChannel, message, routingKey);
+        }
+
 
         private IModel CreateConsumerChannel()
         {
@@ -133,8 +154,8 @@ namespace RabbitMQ.EventBus
             {
                 channel.QueueDeclare(queue: queue.Name,
                                      durable: queue.Durable,
-                                     exclusive: false,
-                                     autoDelete: false,
+                                     exclusive: queue.Exclusive,
+                                     autoDelete: queue.AutoDelete,
                                      arguments: null);
             }
 
@@ -149,6 +170,8 @@ namespace RabbitMQ.EventBus
             return channel;
         }
 
+        private RabbitQueue FindQueueForName(string name) => _queues.Find(x => x.Name.Equals(name));
+
         public void Dispose()
         {
             if (_consumerChannel != null)
@@ -157,5 +180,14 @@ namespace RabbitMQ.EventBus
             }
             _queues.Clear();
         }
+
+        //public void BasicAck(ulong deliveryTag, bool multiple)
+        //{
+        //    _consumerChannel.BasicAck(deliveryTag: deliveryTag,
+        //        multiple: multiple);
+        //}
+
+        //public IBasicProperties CreateBasicProperties() => _consumerChannel.CreateBasicProperties();
+
     }
 }

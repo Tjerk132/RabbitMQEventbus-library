@@ -1,13 +1,7 @@
-﻿using Newtonsoft.Json;
-using RabbitMQ.Models;
-using System;
+﻿using RabbitMQ.Models;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RabbitMQEventbus
+namespace RabbitMQ
 {
     public class RabbitMQConfiguration
     {

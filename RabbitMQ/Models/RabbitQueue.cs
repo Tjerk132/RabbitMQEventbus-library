@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace RabbitMQ.Models
 {
@@ -18,20 +16,20 @@ namespace RabbitMQ.Models
         /// 
         public bool Durable { get; set; }
 
-        private List<string> routingKeys;
+        public bool Exclusive { get; set; }
+        public bool AutoDelete { get; set; }
+
         /// <summary>
         /// The routingKeys the queue will be binded with
         /// </summary>
-        public List<string> RoutingKeys 
-        {
-            get => routingKeys;
-            set => routingKeys = value ?? new List<string>();
-        }
+        public List<string> RoutingKeys { get; set; }
 
         /// <summary>
         /// Default constructor required for configuration
         /// </summary>
-        public RabbitQueue() { }
+        public RabbitQueue() {
+            RoutingKeys = new List<string>();
+        }
 
         public void AddRoutingKey(string routingKey) => RoutingKeys.Add(routingKey);
         

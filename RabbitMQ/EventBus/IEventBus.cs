@@ -2,12 +2,13 @@
 using RabbitMQ;
 using RabbitMQ.Client;
 using RabbitMQ.Events;
+using RabbitMQ.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RabbitMQ.EventBus
+namespace RabbitMQ.EventsBus
 {
     public interface IEventBus
     {
@@ -36,5 +37,23 @@ namespace RabbitMQ.EventBus
         /// <param name="routingKeys">The routing keys to unsubscribe with</param>
         /// <param name="queueName">The name of the queue to unsubscribe from</param>
         public void Unsubscribe(string queueName, List<string> routingKeys);
+
+        /// <summary>
+        /// Creates a rpcServer on the given queue
+        /// </summary>
+        /// <param name="queue"></param>
+        public void CreateRpcServer<E, EH>(string queue)
+              where E : IntegrationEvent
+              where EH : IRpcIntegrationEventHandler<E>;
+
+        /// <summary>
+        /// Calls the rpcServer if created and sends a message with the given routingKey
+        /// </summary>
+        /// <param name="exchange"></param>
+        /// <param name="message"></param>
+        /// <param name="routingKey"></param>
+        /// <returns>The message received from the RPC server</returns>
+        public string CallRpcServer(object message, string routingKey);
+
     }
 }

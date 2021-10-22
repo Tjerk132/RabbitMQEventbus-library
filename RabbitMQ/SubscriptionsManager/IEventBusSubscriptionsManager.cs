@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using RabbitMQ.Events;
 using RabbitMQ.Models;
-using System;
 
 namespace RabbitMQ.SubscriptionsManager
 {
@@ -28,5 +26,25 @@ namespace RabbitMQ.SubscriptionsManager
         /// <param name="exchange">The exchange on which the subscription removal should occur</param>
         /// <param name="queue">The queue with routingKeys to unbind</param>
         void RemoveSubscription(IModel channel, RabbitExchange exchange, RabbitQueue queue);
+
+        /// <summary>
+        /// Creates a rpcServer on the given queue with the given channel
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="queue"></param>
+        public void CreateRpcServer<E, EH>(IModel channel, RabbitQueue queue)
+              where E : IntegrationEvent
+              where EH : IRpcIntegrationEventHandler<E>;
+
+        /// <summary>
+        /// Calls the rpcServer if created and sends a message with the given routingKey
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="queue"></param>
+        /// <param name="exchange"></param>
+        /// <param name="message"></param>
+        /// <param name="routingKey"></param>
+        /// <returns>The message received from the RPC server</returns>
+        public string CallRpcServer(IModel channel, object message, string routingKey);
     }
 }

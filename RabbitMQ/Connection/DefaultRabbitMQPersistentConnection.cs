@@ -47,6 +47,7 @@ namespace RabbitMQ.Connection
             }
 
             return _connection.CreateModel();
+
         }
 
         public void Dispose()
