@@ -69,11 +69,12 @@ namespace RabbitMQ.SubscriptionsManager
             }
         }
 
-        public void CreateRpcServer<E, EH>(IModel channel, RabbitQueue queue)
+        public void CreateRpcServer<E, EH>(IModel channel, object[] args, RabbitQueue queue)
             where E : IntegrationEvent
             where EH : IRpcIntegrationEventHandler<E>
         {
-            _ = new RpcServer<E, EH>(channel, queue);
+            _ = new RpcServer<E, EH>(channel, queue, args);
+            _logger.LogTrace("RPC server created on queue '{0}'. awaiting requests...", queue.Name);
         }
 
         public string CallRpcServer(IModel channel, object message, string routingKey)

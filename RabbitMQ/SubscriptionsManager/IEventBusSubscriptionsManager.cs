@@ -22,7 +22,7 @@ namespace RabbitMQ.SubscriptionsManager
         /// <summary>
         /// Unbinds the given queue from the event bus' exchange
         /// </summary>
-        /// <param name="channel">THe channel that will be used to declare exchanges and unbind with the given queue</param>
+        /// <param name="channel">The channel that will be used to declare exchanges and unbind with the given queue</param>
         /// <param name="exchange">The exchange on which the subscription removal should occur</param>
         /// <param name="queue">The queue with routingKeys to unbind</param>
         void RemoveSubscription(IModel channel, RabbitExchange exchange, RabbitQueue queue);
@@ -30,20 +30,19 @@ namespace RabbitMQ.SubscriptionsManager
         /// <summary>
         /// Creates a rpcServer on the given queue with the given channel
         /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="queue"></param>
-        public void CreateRpcServer<E, EH>(IModel channel, RabbitQueue queue)
+        /// <param name="channel">The channel that will be used to declare the queue and consume with</param>
+        /// <param name="args">The services to inject into the eventHandler</param>
+        /// <param name="queue">The queue on which the rpc server will run</param>
+        public void CreateRpcServer<E, EH>(IModel channel, object[] args, RabbitQueue queue)
               where E : IntegrationEvent
               where EH : IRpcIntegrationEventHandler<E>;
 
         /// <summary>
         /// Calls the rpcServer if created and sends a message with the given routingKey
         /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="queue"></param>
-        /// <param name="exchange"></param>
-        /// <param name="message"></param>
-        /// <param name="routingKey"></param>
+        /// <param name="channel">The channel that will be used to consume and publish with</param>
+        /// <param name="message">The message to publish</param>
+        /// <param name="routingKey">The queue the message will be send to</param>
         /// <returns>The message received from the RPC server</returns>
         public string CallRpcServer(IModel channel, object message, string routingKey);
     }

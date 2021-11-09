@@ -12,7 +12,7 @@ namespace RabbitMQEventbus.RabbitMQ.Models
         where E : IntegrationEvent
         where EH : IRpcIntegrationEventHandler<E>
     {
-        public RpcServer(IModel channel, RabbitQueue queue)
+        public RpcServer(IModel channel, RabbitQueue queue, object[] args)
         {
             channel.QueueDeclare(queue: queue.Name, durable: queue.Durable,
               exclusive: queue.Exclusive, autoDelete: queue.AutoDelete, arguments: null);
@@ -22,8 +22,6 @@ namespace RabbitMQEventbus.RabbitMQ.Models
             var consumer = new EventingBasicConsumer(channel);
             channel.BasicConsume(queue: queue.Name,
               autoAck: false, consumer: consumer);
-
-            Console.WriteLine("RPC server created, awaiting requests...");
 
             consumer.Received += (sender, eventArgs) =>
             {
@@ -39,7 +37,7 @@ namespace RabbitMQEventbus.RabbitMQ.Models
                 E integrationEvent = (E)JsonConvert.DeserializeObject(message, typeof(E));
                 integrationEvent.SetArgs(eventArgs);
 
-                EH eventHandler = (EH)Activator.CreateInstance(typeof(EH));
+                EH eventHandler = (EH)Activator.CreateInstance(typeof(EH), args);
 
                 object response = eventHandler.Process(integrationEvent);
 
@@ -50,6 +48,7 @@ namespace RabbitMQEventbus.RabbitMQ.Models
 
                 channel.BasicPublish(exchange: "", routingKey: props.ReplyTo,
                     basicProperties: replyProps, body: responseBytes);
+
                 channel.BasicAck(deliveryTag: eventArgs.DeliveryTag,
                     multiple: false);
 

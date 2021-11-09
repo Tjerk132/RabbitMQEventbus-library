@@ -27,7 +27,7 @@ namespace RabbitMQ.EventsBus
         /// <param name="routingKeys">The routing keys to subscribe with</param>
         /// <param name="services">The services to inject into the eventHandler</param>
         /// <param name="queueName">The name of the queue to subscribe to</param>
-        public void Subscribe<E, EH>(string queueName, List<string> routingKeys, object[] services)
+        public void Subscribe<E, EH>(string queueName, List<string> routingKeys, object[] services = null)
             where E : IntegrationEvent
             where EH : IIntegrationEventHandler<E>;
 
@@ -41,19 +41,18 @@ namespace RabbitMQ.EventsBus
         /// <summary>
         /// Creates a rpcServer on the given queue
         /// </summary>
-        /// <param name="queue"></param>
-        public void CreateRpcServer<E, EH>(string queue)
+        /// <param name="queue">The queue on which the rpc server will run</param>
+        /// <param name="services">The services to inject into the eventHandler</param>
+        public void CreateRpcServer<E, EH>(string queue, object[] services = null)
               where E : IntegrationEvent
               where EH : IRpcIntegrationEventHandler<E>;
 
         /// <summary>
         /// Calls the rpcServer if created and sends a message with the given routingKey
         /// </summary>
-        /// <param name="exchange"></param>
-        /// <param name="message"></param>
-        /// <param name="routingKey"></param>
+        /// <param name="message">The message to publish</param>
+        /// <param name="routingKey">The queue the message will be send to</param>
         /// <returns>The message received from the RPC server</returns>
         public string CallRpcServer(object message, string routingKey);
-
     }
 }

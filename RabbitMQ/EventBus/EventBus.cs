@@ -44,7 +44,7 @@ namespace RabbitMQ.EventsBus
             _consumerChannel = CreateConsumerChannel();
         }
 
-        public void Subscribe<E, EH>(string queueName, List<string> routingKeys, object[] services)
+        public void Subscribe<E, EH>(string queueName, List<string> routingKeys, object[] services = null)
             where E : IntegrationEvent
             where EH : IIntegrationEventHandler<E>
         {
@@ -117,13 +117,13 @@ namespace RabbitMQ.EventsBus
         }
 
 
-        public void CreateRpcServer<E, EH>(string queueName)
+        public void CreateRpcServer<E, EH>(string queueName, object[] services = null)
                 where E : IntegrationEvent
                 where EH : IRpcIntegrationEventHandler<E>
         {
             if (FindQueueForName(queueName) is RabbitQueue queue && queue != null)
             { 
-                _subsManager.CreateRpcServer<E, EH>(_consumerChannel, queue);
+                _subsManager.CreateRpcServer<E, EH>(_consumerChannel, args: services, queue);
             }
             else
             {
@@ -180,14 +180,5 @@ namespace RabbitMQ.EventsBus
             }
             _queues.Clear();
         }
-
-        //public void BasicAck(ulong deliveryTag, bool multiple)
-        //{
-        //    _consumerChannel.BasicAck(deliveryTag: deliveryTag,
-        //        multiple: multiple);
-        //}
-
-        //public IBasicProperties CreateBasicProperties() => _consumerChannel.CreateBasicProperties();
-
     }
 }

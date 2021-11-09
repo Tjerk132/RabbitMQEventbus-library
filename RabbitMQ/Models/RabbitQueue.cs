@@ -39,6 +39,6 @@ namespace RabbitMQ.Models
 
         public void RemoveRoutingKeys(List<string> routingKeys) => RoutingKeys = RoutingKeys.Except(routingKeys).ToList();
 
-        public void Clear() => RoutingKeys.Clear();
+        public void ClearKeys() => RoutingKeys.Clear();
     }
 }
