@@ -5,6 +5,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Connection;
 using RabbitMQ.EventsBus;
 using RabbitMQ.SubscriptionsManager;
+using RabbitMQEventbus.RabbitMQ.Models;
 
 namespace RabbitMQ
 {
@@ -25,7 +26,14 @@ namespace RabbitMQ
             services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
-                IConnectionFactory connectionFactory = new ConnectionFactory() { HostName = configuration.Hostname };
+
+                RabbitHost host = configuration.Host;
+
+                IConnectionFactory connectionFactory = new ConnectionFactory() { 
+                    HostName = host.Hostname, 
+                    UserName = host.Username, 
+                    Password = host.Password 
+                };
 
                 return new DefaultRabbitMQPersistentConnection(connectionFactory, logger);
             });

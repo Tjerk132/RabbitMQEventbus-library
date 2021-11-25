@@ -1,4 +1,5 @@
 ﻿using RabbitMQ.Models;
+using RabbitMQEventbus.RabbitMQ.Models;
 using System.Collections.Generic;
 
 namespace RabbitMQ
@@ -8,7 +9,7 @@ namespace RabbitMQ
         /// <summary>
         /// The host that will be used to configure the connection with RabbitMQ
         /// </summary>
-        public string Hostname { get; set; }
+        public RabbitHost Host { get; set; }
 
         /// <summary>
         /// The exchange that should be declared to the eventbus

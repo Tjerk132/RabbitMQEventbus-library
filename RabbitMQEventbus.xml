@@ -151,7 +151,7 @@
             Default constructor required for configuration
             </summary>
         </member>
-        <member name="P:RabbitMQ.RabbitMQConfiguration.Hostname">
+        <member name="P:RabbitMQ.RabbitMQConfiguration.Host">
             <summary>
             The host that will be used to configure the connection with RabbitMQ
             </summary>
@@ -201,6 +201,26 @@
             <param name="message">The message to publish</param>
             <param name="routingKey">The queue the message will be send to</param>
             <returns>The message received from the RPC server</returns>
+        </member>
+        <member name="P:RabbitMQEventbus.RabbitMQ.Models.RabbitHost.Hostname">
+            <summary>
+            The hostname to connect to
+            </summary>
+        </member>
+        <member name="P:RabbitMQEventbus.RabbitMQ.Models.RabbitHost.Username">
+            <summary>
+            The username to login with
+            </summary>
+        </member>
+        <member name="P:RabbitMQEventbus.RabbitMQ.Models.RabbitHost.Password">
+            <summary>
+            The password to login with
+            </summary>
+        </member>
+        <member name="M:RabbitMQEventbus.RabbitMQ.Models.RabbitHost.#ctor">
+            <summary>
+            Default constructor required for configuration
+            </summary>
         </member>
     </members>
 </doc>
