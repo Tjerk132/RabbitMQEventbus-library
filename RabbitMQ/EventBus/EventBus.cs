@@ -48,7 +48,8 @@ namespace RabbitMQ.EventsBus
             where E : IntegrationEvent
             where EH : IIntegrationEventHandler<E>
         {
-            if (FindQueueForName(queueName) is RabbitQueue queue && queue != null)
+            RabbitQueue queue = FindQueueForName(queueName);
+            if (queue != null)
             {
                 queue.AddRoutingKeys(routingKeys);
                 _subsManager.AddSubscription<E, EH>(_consumerChannel, args: services, _exchange, queue);
@@ -61,14 +62,15 @@ namespace RabbitMQ.EventsBus
 
         public void Unsubscribe(string queueName, List<string> routingKeys)
         {
-            if (FindQueueForName(queueName) is RabbitQueue queue && queue != null)
+            RabbitQueue queue = FindQueueForName(queueName);
+            if(queue != null)
             {
                 queue.RemoveRoutingKeys(routingKeys);
                 _subsManager.RemoveSubscription(_consumerChannel, _exchange, queue);
             }
             else
             {
-                _logger.LogWarning("Cannot unsubscribe to queue '{0}' because not found", queueName);
+                _logger.LogWarning("Cannot unsubscribe from queue '{0}' because not found", queueName);
             }
         }
 
@@ -121,7 +123,8 @@ namespace RabbitMQ.EventsBus
                 where E : IntegrationEvent
                 where EH : IRpcIntegrationEventHandler<E>
         {
-            if (FindQueueForName(queueName) is RabbitQueue queue && queue != null)
+            RabbitQueue queue = FindQueueForName(queueName);
+            if (queue != null) 
             { 
                 _subsManager.CreateRpcServer<E, EH>(_consumerChannel, args: services, queue);
             }
